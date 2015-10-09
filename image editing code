@@ -1,0 +1,62 @@
+
+from PIL import Image
+im = Image.open("comic.jpg")
+#im.show()
+#print(im.format, im.size, im.mode) shows type of file, pixels, coloring
+#im.show()shows image (opens)
+out=im.resize((2100,1100))
+#im.show()
+#out.show() will show the new image proportions
+source=im.split()
+
+mask = source[2].point(lambda i: i > 200 and 255) #grabs all B valued points >200
+out_g=source[1].point(lambda i:i+255) #processes all green points to be 255 if out is called
+out_b=source[2].point(lambda i:i+255)
+out_r=source[0].point(lambda i:i+255)
+source[1].paste(out_g, None, mask) #will change green to be 255 where blue >200... OH. I GET IT.
+source[2].paste(out_b, None, mask)
+source[0].paste(out_r, None, mask)
+
+so=Image.merge(im.mode, source)
+#so.show()
+sourcea=so.split()
+mask_a = sourcea[2].point(lambda i: i <90 and 255) #grabs all B valued points <90
+out_ga=sourcea[1].point(lambda i:i-255) #processes all green points to be 0 if out is called
+out_ba=sourcea[2].point(lambda i:i-255)
+out_ra=sourcea[0].point(lambda i:i-255)
+sourcea[1].paste(out_ga, None, mask_a) #will change green to be 0 where value blue<90
+sourcea[2].paste(out_ba, None, mask_a)
+sourcea[0].paste(out_ra, None, mask_a) #this is darkening at a threshold... contrast specific
+
+new=Image.merge(im.mode, sourcea)
+#new.show()
+
+sourceb =new.split()
+call= sourceb[2].point(lambda i: 120<i<190 and 255 )
+
+out_gb=sourceb[1].point(lambda i:(i-255)*0 +140) #processes all green points to be 150 if out is called
+out_bb=sourceb[2].point(lambda i:(i-255)*0 +140)
+out_rb=sourceb[0].point(lambda i:(i-255)*0 +140)
+sourceb[1].paste(out_gb, None, call) #will change green to be 150 where value blue<90
+sourceb[2].paste(out_bb, None, call)
+sourceb[0].paste(out_rb, None, call) #this is darkening at a threshold... contrast specific
+
+final=Image.merge(im.mode, sourceb)
+final.show()
+'''
+sources=so.split()
+red_check=source[0].point(lambda i: i<60 and 255)
+green=sources[1].point(lambda i: i>120 and 255)
+great=sources[1].point(lambda i: i- 255)
+sources[1].paste(great, None, red_check)
+see=Image.merge(so.mode, sources)
+see.show()
+
+sources
+http://effbot.org/imagingbook/introduction.htm
+'''
+
+''' further ideas:
+- make 'blurry' only on certain blocks of pixels i.e. gray matter
+- get rid of the grey pixels from eraser by function with threshold for density of darkness
+'''
