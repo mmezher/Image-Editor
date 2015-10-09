@@ -52,7 +52,7 @@ sources[1].paste(great, None, red_check)
 see=Image.merge(so.mode, sources)
 see.show()
 
-sources
+sources of coding
 http://effbot.org/imagingbook/introduction.htm
 '''
 
